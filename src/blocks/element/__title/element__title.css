@@ -1,0 +1,9 @@
+.element__title {
+  background-color: #FFFFFF;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 282px;
+  max-width: 282px;
+}

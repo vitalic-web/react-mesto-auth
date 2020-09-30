@@ -1,0 +1,12 @@
+.profile__avatar-editor {
+  width: 120px;
+  max-width: 120px;
+  height: 120px;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.profile__avatar-editor:hover {
+  background: rgba(00, 00, 00, .8) url(../../../images/profile__avatar-editor.svg) no-repeat center;
+  cursor: pointer;
+}

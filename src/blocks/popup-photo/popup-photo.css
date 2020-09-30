@@ -1,0 +1,9 @@
+@import url(./__text/popup-photo__text.css);
+@import url(./__image/popup-photo__image.css);
+
+.popup-photo {
+  max-width: 75vw;
+  position: fixed;
+  display: flex;
+  align-items: center;
+}

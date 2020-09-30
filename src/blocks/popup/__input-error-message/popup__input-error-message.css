@@ -1,0 +1,13 @@
+.popup__input-error-message {
+  font-size: 12px;
+  line-height: 15px;
+  color: red;
+  width: 358px;
+  max-width: 358px;
+  position: absolute;
+  top: 148px;
+}
+
+.popup__input-error-message:nth-of-type(2) {
+  top: 209px;
+}

@@ -1,0 +1,7 @@
+.element__title-like.element__title-like_active {
+  background-image: url(../../../../images/element__title-like_active.svg);
+}
+
+.element__title-like.element__title-like_active:hover {
+  opacity: 1;
+}

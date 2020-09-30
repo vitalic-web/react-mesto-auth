@@ -1,0 +1,11 @@
+.profile__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+@media screen and (min-width: 300px) and (max-width: 920px) {
+  .profile__title {
+    justify-content: center;
+  }
+}
