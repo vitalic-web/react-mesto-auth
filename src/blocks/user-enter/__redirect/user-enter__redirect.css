@@ -1,0 +1,11 @@
+.user-enter__redirect {
+  margin: 15px 0 0;
+  font-size: 30px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.user-enter__redirect a {
+  color: white;
+  text-decoration: none;
+}

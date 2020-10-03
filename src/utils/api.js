@@ -3,7 +3,7 @@
  */
 
 export class Api {
-  constructor(options){
+  constructor(options) {
     this._url = options.url;
     this._method = options.method;
     this._headers = options.headers;
@@ -42,7 +42,7 @@ export class Api {
         about: about
       })
     })
-    .then(this._handleResponse)
+      .then(this._handleResponse)
   };
 
   addCard(place, link) {
@@ -54,7 +54,7 @@ export class Api {
         link: link
       })
     })
-    .then(this._handleResponse)
+      .then(this._handleResponse)
   };
 
   deleteCard(card) {
@@ -62,7 +62,7 @@ export class Api {
       method: 'DELETE',
       headers: this._headers
     })
-    .then(this._handleResponse)
+      .then(this._handleResponse)
   };
 
   changeLikeCardStatus(cardID, isLiked) {
@@ -89,7 +89,7 @@ export class Api {
         avatar: inputValue
       })
     })
-    .then(this._handleResponse)
+      .then(this._handleResponse)
   };
 }
 

@@ -1,0 +1,12 @@
+@import url('./__title/user-enter__title.css');
+@import url('./__input/user-enter__input.css');
+@import url('./__button/user-enter__button.css');
+@import url('./__redirect/user-enter__redirect.css');
+
+.user-enter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 358px;
+  max-width: 358px;
+}

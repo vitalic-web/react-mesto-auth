@@ -1,0 +1,17 @@
+.user-enter__input {
+  width: 100%;
+  margin: 0 0 43px;
+  padding: 0 0 13px;
+  font-size: 14px;
+  line-height: 17px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-bottom: 2px solid white;
+}
+
+.user-enter__input::placeholder {
+  font-size: 14px;
+  line-height: 17px;
+  color: white;
+}

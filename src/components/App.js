@@ -1,14 +1,21 @@
-import React, {useState, useEffect} from 'react';
-import Header from './Header';
+import React, { useState, useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+
 import Main from './Main';
 import Footer from './Footer';
+import Header from './Header';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
-import {api} from '../utils/api.js';
-import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+
+import { api } from '../utils/api.js';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 /**
  * Основной компонент, установлены слушатели на закрытие крестиком/escape/overlay
@@ -20,16 +27,21 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState({name: '', link: '', visibility: false});
+  const [selectedCard, setSelectedCard] = useState({ name: '', link: '', visibility: false });
   const [currentUser, setCurrentUser] = useState();
   const [cards, setCards] = useState([]);
+  const [isLogin, setIsLogin] = useState(false);
+  const [userData, setUserData] = useState({});
+  const history = useHistory();
+  const [headerState, setHeaderState] = useState('');
+  const BASE_URL = 'https://auth.nomoreparties.co';
 
   useEffect(() => {
     Promise.all([api.getProfileInfo(), api.getInitialCards()])
       .then(([profileInfo, cardsInfo]) => {
         setCurrentUser(profileInfo);
         setCards(cardsInfo);
-    })
+      })
       .catch(err => console.error(err))
   }, [])
 
@@ -64,7 +76,7 @@ function App() {
   }
 
   function handleCardClick(name, link, visibility) {
-    setSelectedCard({name, link, visibility});
+    setSelectedCard({ name, link, visibility });
   }
 
   // закрытие всех попапов
@@ -73,7 +85,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard((selectedCard) => {
-      return {...selectedCard, visibility: false}; // возврат значения адреса/имени картинки для плавного закрытия
+      return { ...selectedCard, visibility: false }; // возврат значения адреса/имени картинки для плавного закрытия
     });
   }
 
@@ -129,36 +141,99 @@ function App() {
     }
   })
 
+  const tokenCheck = () => {
+    let jwt = localStorage.getItem('jwt');
+
+    if (jwt) {
+      return fetch(`${BASE_URL}/users/me`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwt}`,
+        }
+      })
+        .then(res => res.json())
+        .then(data => data.data)
+        .then(res => {
+          if (res) {
+            setIsLogin(true);
+            setUserData({
+              email: res.email,
+            });
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+
+  // console.log(`User mail is: ${userData.email}`);
+
+  useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  // изменение состояния надписи справа в хедэре
+  function handleHeader(state) {
+    setHeaderState(state);
+  }
+
+  // function handleHeaderEmail(email) {
+  //   setHeaderState(email);
+  // }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
 
-        <Header/>
+        {/* <InfoTooltip /> */}
 
-        <Main cards={cards}
-              onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onCardClick={handleCardClick}
+        <Header auth={headerState} email={userData.email} />
+
+        <Switch>
+
+          <Route path="/sign-up">
+            <Register handleHeader={handleHeader} />
+          </Route>
+
+          <Route path="/sign-in">
+            <Login handleHeader={handleHeader} />
+          </Route>
+
+          <ProtectedRoute path="/" isLogin={isLogin}
+            component={Main}
+            cards={cards}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick} />
+
+        </Switch>
+
+        <EditProfilePopup isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
         />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
+        />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          onAddPlaceSubmit={handleAddPlaceSubmit}
+        />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlaceSubmit={handleAddPlaceSubmit}/>
-
-        <PopupWithForm title="Вы уверены?"
-                       name="is_delete"
-        >
+        <PopupWithForm title="Вы уверены?" name="is_delete">
           <button className="popup__save-button popup__save-button_delete" type="submit">Да</button>
         </PopupWithForm>
 
-        <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
-        <Footer/>
+        <Footer />
 
       </div>
     </CurrentUserContext.Provider>

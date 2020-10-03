@@ -1,0 +1,13 @@
+.user-enter__button {
+  width: 100%;
+  height: 50px;
+  background: white;
+  outline: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 18px;
+  line-height: 22px;
+  color: black;
+  padding: 0;
+  margin: 173px 0 0;
+}

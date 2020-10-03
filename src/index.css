@@ -9,3 +9,5 @@
 @import url(./blocks/element/element.css);
 @import url(./blocks/popup/popup.css);
 @import url(./blocks/popup-photo/popup-photo.css);
+@import url(./blocks/user-enter/user-enter.css);
+@import url(./blocks/popup-tooltip/popup-tooltip.css);
