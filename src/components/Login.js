@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Header from './Header';
 import { useHistory } from 'react-router-dom';
 
-function Login({handleHeader}) {
+function Login({setLogin, signLink}) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -10,8 +10,17 @@ function Login({handleHeader}) {
   const BASE_URL = 'https://auth.nomoreparties.co';
   const history = useHistory();
 
+  //setLogin('Регистрация');
+  // signLink('/sign-up');
+
   // изменение состояния хедэра
-  handleHeader('Регистрация');
+  // handleHeader('', 'Регистрация', '/sign-up');
+
+
+
+
+
+  // handleHeaderLink('/sign-up');
 
   // запись введенных данных в поле email
   function handleEmailInput(e) {
@@ -52,7 +61,38 @@ function Login({handleHeader}) {
       })
       .then(() => resetForm())
       .then(() => history.push('/'))
-      .then(() => handleHeader('Войти'))
+      // .then(() => {
+      //   let jwt = localStorage.getItem('jwt');
+
+      //   if (jwt) {
+      //     return fetch(`${BASE_URL}/users/me`, {
+      //       method: 'GET',
+      //       headers: {
+      //         'Accept': 'application/json',
+      //         'Content-Type': 'application/json',
+      //         'Authorization': `Bearer ${jwt}`,
+      //       }
+      //     })
+      //       .then(res => res.json())
+      //       .then(data => data.data)
+      //       .then(res => {
+      //         if (res) {
+      //           setIsLogin(true);
+      //           setEmail(res.email);
+      //         }
+      //       })
+      //       .catch((err) => console.log(err));
+      //   }
+      // })
+      // .then(() => history.push('/'))
+
+      // .then(() => {
+      //   handleHeader('Выйти', '/sign-in');
+
+      //   setUserData({
+      //     email: email
+      //   });
+      // })
       .catch((err) => console.log(err));
   };
 

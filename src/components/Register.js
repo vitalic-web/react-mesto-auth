@@ -2,15 +2,29 @@ import React, { useState } from 'react';
 import Header from './Header';
 import { useHistory } from 'react-router-dom';
 
-function Register({handleHeader}) {
+function Register({setLogin, setLink}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const BASE_URL = 'https://auth.nomoreparties.co';
   const history = useHistory();
 
+  //setLogin('Войти');
+  //setLink('/sign-in');
+  // signLink('/sign-in');
+
+  // setTest({
+  //   email: '',
+  //   auth: 'heh',
+  //   link: ''
+  // })
+
   // изменение состояния хедэра
-  handleHeader('Войти');
+  //handleHeader('', 'Войти', '/sign-in');
+
+  //handleHeaderEmail('');
+
+  // handleHeaderLink('/sign-in');
 
   // запись введенных данных в поле email
   function handleEmailInput(e) {

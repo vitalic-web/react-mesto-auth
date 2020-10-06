@@ -30,13 +30,18 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({ name: '', link: '', visibility: false });
   const [currentUser, setCurrentUser] = useState();
   const [cards, setCards] = useState([]);
+
   const [isLogin, setIsLogin] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({
+    email: '',
+    auth: 'auth'
+  });
+
   const history = useHistory();
-  const [headerState, setHeaderState] = useState('');
   const BASE_URL = 'https://auth.nomoreparties.co';
 
   useEffect(() => {
+
     Promise.all([api.getProfileInfo(), api.getInitialCards()])
       .then(([profileInfo, cardsInfo]) => {
         setCurrentUser(profileInfo);
@@ -144,6 +149,8 @@ function App() {
   const tokenCheck = () => {
     let jwt = localStorage.getItem('jwt');
 
+    console.log(jwt);
+
     if (jwt) {
       return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
@@ -155,32 +162,51 @@ function App() {
       })
         .then(res => res.json())
         .then(data => data.data)
-        .then(res => {
+        .then(res => { // {_id: "5f7afa5a86203500127de5b1", email: "sss@sss.ru"}
+          console.log(res);
           if (res) {
             setIsLogin(true);
             setUserData({
               email: res.email,
+              auth: 'Выйти'
             });
+            history.push('/')
           }
         })
         .catch((err) => console.log(err));
     }
   }
 
-  // console.log(`User mail is: ${userData.email}`);
-
   useEffect(() => {
     tokenCheck();
-  }, []);
+  }, [isLogin]);
 
-  // изменение состояния надписи справа в хедэре
-  function handleHeader(state) {
-    setHeaderState(state);
+  // if (!isLogin) {
+  //   setUserData({
+  //     email: '',
+  //     auth: 'Выйти'
+  //   });
+  // }
+
+  function signOut() {
+    localStorage.removeItem('jwt');
+    setIsLogin(false);
   }
 
-  // function handleHeaderEmail(email) {
-  //   setHeaderState(email);
-  // }
+  function signLink(path) {
+    history.push(path);
+  }
+
+  //console.log(isLogin);
+
+  const [test, setTest] = useState({
+    email: '',
+    auth: '',
+    link: ''
+  });
+
+  const [login, setLogin] = useState('');
+  const [link, setLink] = useState('/');
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -188,16 +214,19 @@ function App() {
 
         {/* <InfoTooltip /> */}
 
-        <Header auth={headerState} email={userData.email} />
+        {/* <Header userEmail={isLogin ? userData.email : ''} userAuth={isLogin ? userData.auth : login}
+          signOut={signOut} link={link} /> */}
+
+        <Header isLogin={isLogin} userData={userData} signOut={signOut} />
 
         <Switch>
 
           <Route path="/sign-up">
-            <Register handleHeader={handleHeader} />
+            <Register />
           </Route>
 
           <Route path="/sign-in">
-            <Login handleHeader={handleHeader} />
+            <Login />
           </Route>
 
           <ProtectedRoute path="/" isLogin={isLogin}
