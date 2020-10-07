@@ -105,6 +105,35 @@ export class Api {
       })
   }
 
+  register(email, password, error) {
+    return fetch(`${this._url}/signup`, {
+      method: this._method,
+      headers: this._headers,
+      body: JSON.stringify({ email, password })
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          error(true);
+          return Promise.reject(`Ошибка: ${response.status}`);
+        }
+      })
+  }
+
+  getUserInfo(jwt) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => data.data)
+  }
+
 }
 
 export const api = new Api({

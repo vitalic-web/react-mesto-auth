@@ -14,7 +14,7 @@ import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 
-import { api } from '../utils/api.js';
+import { api, apiAuth } from '../utils/api.js';
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 /**
@@ -30,16 +30,13 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({ name: '', link: '', visibility: false });
   const [currentUser, setCurrentUser] = useState();
   const [cards, setCards] = useState([]);
-
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState({
     email: '',
     auth: 'auth'
   });
   const [isSuccess, setIsSuccess] = useState(false);
-
   const history = useHistory();
-  const BASE_URL = 'https://auth.nomoreparties.co';
 
   useEffect(() => {
     Promise.all([api.getProfileInfo(), api.getInitialCards()])
@@ -153,20 +150,11 @@ function App() {
 
   // проверка токена
   const tokenCheck = () => {
-    let jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('jwt');
 
     if (jwt) {
-      return fetch(`${BASE_URL}/users/me`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`,
-        }
-      })
-        .then(res => res.json())
-        .then(data => data.data)
-        .then(res => { // {_id: "5f7afa5a86203500127de5b1", email: "sss@sss.ru"}
+      apiAuth.getUserInfo(jwt)
+        .then(res => {
           if (res) {
             setIsLogin(true);
             setUserData({

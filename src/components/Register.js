@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import InfoTooltip from './InfoTooltip';
+import { apiAuth } from '../utils/api';
 
 function Register({ setIsLogin, setIsSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState(false);
-  const BASE_URL = 'https://auth.nomoreparties.co';
   const history = useHistory();
 
   // запись введенных данных в поле email
@@ -51,40 +51,15 @@ function Register({ setIsLogin, setIsSuccess }) {
     }
   })
 
+  // функция сабмита
+  // при успешной регистрации происходит авторизация и редирект на главную
   function handleSubmit(e) {
     e.preventDefault();
 
-    return fetch(`${BASE_URL}/signup`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    })
-      .then((response) => {
-        if (response.status === 201) {
-          return response.json();
-        } else {
-          setIsError(true);
-          return Promise.reject(`Ошибка: ${response.status}`);
-        }
-      })
+    apiAuth.register(email, password, setIsError) // регистрация
       .then(() => {
-        setTimeout(() => {
-          return fetch(`${BASE_URL}/signin`, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password })
-          })
-            .then((response => response.json()))
-            .then((data) => {
-              localStorage.setItem('jwt', data.token);
-              return data;
-            })
+        setTimeout(() => { // установка таймера в пол-секунды (без таймера второй запрос сервер не принимает)
+          apiAuth.login(email, password) // авторизация
             .then(() => resetForm())
             .then(() => setIsLogin(true))
             .then(() => history.push('/'))
