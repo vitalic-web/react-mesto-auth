@@ -17,12 +17,6 @@ import InfoTooltip from './InfoTooltip';
 import { api, apiAuth } from '../utils/api.js';
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-/**
- * Основной компонент, установлены слушатели на закрытие крестиком/escape/overlay
- * @returns {JSX.Element} - возврат разметки всей старницы
- * @constructor
- */
-
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
@@ -172,6 +166,7 @@ function App() {
     tokenCheck();
   }, [isLogin]);
 
+  // выход из учетной записи
   function signOut() {
     localStorage.removeItem('jwt');
     setIsLogin(false);

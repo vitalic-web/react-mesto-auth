@@ -1,7 +1,3 @@
-/**
- * Класс для запросов к api, в нем создается один экземляр и экспортируется для дальнейшей работы
- */
-
 export class Api {
   constructor(options) {
     this._url = options.url;
@@ -92,19 +88,29 @@ export class Api {
       .then(this._handleResponse)
   };
 
+  // метод авторизации пользователя
   login(email, password) {
     return fetch(`${this._url}/signin`, {
       method: this._method,
       headers: this._headers,
       body: JSON.stringify({ email, password })
     })
-      .then((response => response.json()))
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 400) {
+          return Promise.reject(`Ошибка: ${response.status} - не передано одно из полей`);
+        } else if (response.status === 401) {
+          return Promise.reject(`Ошибка: ${response.status} - пользователь с таким email не найден`);
+        }
+      })
       .then((data) => {
         localStorage.setItem('jwt', data.token);
         return data;
       })
   }
 
+  // метод регистрации пользователя
   register(email, password, error) {
     return fetch(`${this._url}/signup`, {
       method: this._method,
@@ -114,13 +120,14 @@ export class Api {
       .then((response) => {
         if (response.status === 201) {
           return response.json();
-        } else {
+        } else if (response.status === 400) {
           error(true);
-          return Promise.reject(`Ошибка: ${response.status}`);
+          return Promise.reject(`Ошибка: ${response.status} - некорректно заполнено одно из полей`);
         }
       })
   }
 
+  // метод запроса регистрационных данных пользователя
   getUserInfo(jwt) {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
@@ -130,12 +137,21 @@ export class Api {
         'Authorization': `Bearer ${jwt}`
       }
     })
-      .then(res => res.json())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401 && !jwt) {
+          return Promise.reject(`Ошибка: ${response.status} - токен не передан или передан не в том формате`);
+        } else if (response.status === 401) {
+          return Promise.reject(`Ошибка: ${response.status} - переданный токен некорректен`);
+        }
+      })
       .then(data => data.data)
   }
 
 }
 
+// экземпляр апи для работы с карточками и информацией о пользователе
 export const api = new Api({
   url: 'https://mesto.nomoreparties.co/v1/cohort-13',
   method: 'GET',
@@ -145,6 +161,7 @@ export const api = new Api({
   }
 });
 
+// экземпляр апи для работы с регистрацией/авторизацией пользователя
 export const apiAuth = new Api({
   url: 'https://auth.nomoreparties.co',
   method: 'POST',
