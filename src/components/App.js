@@ -36,12 +36,12 @@ function App() {
     email: '',
     auth: 'auth'
   });
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const history = useHistory();
   const BASE_URL = 'https://auth.nomoreparties.co';
 
   useEffect(() => {
-
     Promise.all([api.getProfileInfo(), api.getInitialCards()])
       .then(([profileInfo, cardsInfo]) => {
         setCurrentUser(profileInfo);
@@ -84,11 +84,16 @@ function App() {
     setSelectedCard({ name, link, visibility });
   }
 
+  function closeSuccessPopup() {
+    setIsSuccess(false);
+  }
+
   // закрытие всех попапов
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    closeSuccessPopup();
     setSelectedCard((selectedCard) => {
       return { ...selectedCard, visibility: false }; // возврат значения адреса/имени картинки для плавного закрытия
     });
@@ -146,10 +151,9 @@ function App() {
     }
   })
 
+  // проверка токена
   const tokenCheck = () => {
     let jwt = localStorage.getItem('jwt');
-
-    console.log(jwt);
 
     if (jwt) {
       return fetch(`${BASE_URL}/users/me`, {
@@ -163,7 +167,6 @@ function App() {
         .then(res => res.json())
         .then(data => data.data)
         .then(res => { // {_id: "5f7afa5a86203500127de5b1", email: "sss@sss.ru"}
-          console.log(res);
           if (res) {
             setIsLogin(true);
             setUserData({
@@ -181,55 +184,28 @@ function App() {
     tokenCheck();
   }, [isLogin]);
 
-  // if (!isLogin) {
-  //   setUserData({
-  //     email: '',
-  //     auth: 'Выйти'
-  //   });
-  // }
-
   function signOut() {
     localStorage.removeItem('jwt');
     setIsLogin(false);
   }
 
-  function signLink(path) {
-    history.push(path);
-  }
-
-  //console.log(isLogin);
-
-  const [test, setTest] = useState({
-    email: '',
-    auth: '',
-    link: ''
-  });
-
-  const [login, setLogin] = useState('');
-  const [link, setLink] = useState('/');
-
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-
-        {/* <InfoTooltip /> */}
-
-        {/* <Header userEmail={isLogin ? userData.email : ''} userAuth={isLogin ? userData.auth : login}
-          signOut={signOut} link={link} /> */}
-
         <Header isLogin={isLogin} userData={userData} signOut={signOut} />
 
-        <Switch>
+        <InfoTooltip isOpen={isSuccess} close={closeSuccessPopup} />
 
+        <Switch>
           <Route path="/sign-up">
-            <Register />
+            <Register setIsLogin={setIsLogin} setIsSuccess={setIsSuccess} />
           </Route>
 
           <Route path="/sign-in">
-            <Login />
+            <Login setIsLogin={setIsLogin} />
           </Route>
 
-          <ProtectedRoute path="/" isLogin={isLogin}
+          <ProtectedRoute exact path="/" isLogin={isLogin}
             component={Main}
             cards={cards}
             onCardLike={handleCardLike}

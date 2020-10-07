@@ -91,6 +91,20 @@ export class Api {
     })
       .then(this._handleResponse)
   };
+
+  login(email, password) {
+    return fetch(`${this._url}/signin`, {
+      method: this._method,
+      headers: this._headers,
+      body: JSON.stringify({ email, password })
+    })
+      .then((response => response.json()))
+      .then((data) => {
+        localStorage.setItem('jwt', data.token);
+        return data;
+      })
+  }
+
 }
 
 export const api = new Api({
@@ -101,4 +115,13 @@ export const api = new Api({
     'Content-Type': 'application/json'
   }
 });
+
+export const apiAuth = new Api({
+  url: 'https://auth.nomoreparties.co',
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+})
 

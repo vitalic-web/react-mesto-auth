@@ -1,30 +1,13 @@
-import React, { useState } from 'react';
-import Header from './Header';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import InfoTooltip from './InfoTooltip';
 
-function Register({setLogin, setLink}) {
+function Register({ setIsLogin, setIsSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
   const BASE_URL = 'https://auth.nomoreparties.co';
   const history = useHistory();
-
-  //setLogin('Войти');
-  //setLink('/sign-in');
-  // signLink('/sign-in');
-
-  // setTest({
-  //   email: '',
-  //   auth: 'heh',
-  //   link: ''
-  // })
-
-  // изменение состояния хедэра
-  //handleHeader('', 'Войти', '/sign-in');
-
-  //handleHeaderEmail('');
-
-  // handleHeaderLink('/sign-in');
 
   // запись введенных данных в поле email
   function handleEmailInput(e) {
@@ -36,7 +19,38 @@ function Register({setLogin, setLink}) {
     setPassword(e.target.value);
   }
 
-  // обработчик сабмита
+  function resetForm() {
+    setEmail('');
+    setPassword('');
+  }
+
+  function close() {
+    setIsError(false);
+  }
+
+  // закрытие попапов через escape и overlay
+  useEffect(() => {
+    function handleOverlayClose(evt) {
+      if (evt.target.classList.contains('popup_active')) {
+        close();
+      }
+    }
+
+    function handleEscClose(evt) {
+      if (evt.key === "Escape") {
+        close();
+      }
+    }
+
+    document.addEventListener('click', handleOverlayClose);
+    document.addEventListener('keydown', handleEscClose);
+
+    return () => {
+      document.removeEventListener('click', handleOverlayClose);
+      document.removeEventListener('keydown', handleEscClose);
+    }
+  })
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -49,45 +63,48 @@ function Register({setLogin, setLink}) {
       body: JSON.stringify({ email, password })
     })
       .then((response) => {
-        // console.log(response);
-        try {
-          if (response.status === 201) {
-            return response.json();
-          }
-        } catch (e) {
-          return (e)
-        }
-      })
-      .then((res) => {
-        // console.log(res);
-        return res;
-      })
-      .then((res) => {
-        if (res) {
-          setMessage('Вы успешно зарегистрировались!');
-          history.push("/sign-in");
+        if (response.status === 201) {
+          return response.json();
         } else {
-          setMessage('Что-то пошло не так! Попробуйте ещё раз.');
+          setIsError(true);
+          return Promise.reject(`Ошибка: ${response.status}`);
         }
-
+      })
+      .then(() => {
+        setTimeout(() => {
+          return fetch(`${BASE_URL}/signin`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+          })
+            .then((response => response.json()))
+            .then((data) => {
+              localStorage.setItem('jwt', data.token);
+              return data;
+            })
+            .then(() => resetForm())
+            .then(() => setIsLogin(true))
+            .then(() => history.push('/'))
+            .then(() => setIsSuccess(true))
+        }, 500);
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <>
-      {/* <Header auth="Войти" /> */}
-
-      <form onSubmit={handleSubmit} className="user-enter">
-        <h1 className="user-enter__title">Регистрация</h1>
-        <input className="user-enter__input" name="email" type="email" id="reg-email" placeholder="Email" required
-          value={email} onChange={handleEmailInput} />
-        <input className="user-enter__input" name="password" type="password" id="reg-password" placeholder="Пароль" required
-          value={password} onChange={handlePasswordInput} />
-        <button className="user-enter__button" type="submit" >Зарегистрироваться</button>
-        <p className="user-enter__redirect">Уже зарегистрированы? <a href="/sign-in">Войти</a></p>
-      </form>
-    </>
+    <form onSubmit={handleSubmit} className="user-enter">
+      <InfoTooltip isOpen={isError} close={close} />
+      <h1 className="user-enter__title">Регистрация</h1>
+      <input className="user-enter__input" name="email" type="email" id="reg-email" placeholder="Email" required
+        value={email} onChange={handleEmailInput} />
+      <input className="user-enter__input" name="password" type="password" id="reg-password" placeholder="Пароль" required
+        value={password} onChange={handlePasswordInput} />
+      <button className="user-enter__button" type="submit" >Зарегистрироваться</button>
+      <p className="user-enter__redirect">Уже зарегистрированы? <a href="/sign-in">Войти</a></p>
+    </form>
   )
 }
 

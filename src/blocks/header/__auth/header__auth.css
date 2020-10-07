@@ -1,4 +1,5 @@
 .header__auth {
   font-size: 18px;
   line-height: 22px;
+  display: flex;
 }
