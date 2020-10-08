@@ -21,6 +21,7 @@ function PopupWithForm({title, name, children, isOpen, onClose, onSubmit, button
         <h3 className="popup__title">{title}</h3>
 
         {children}
+
         <button className="popup__save-button" type="submit">{buttonText}</button>
         <button className="popup__close-icon" type="button" onClick={onClose}/>
       </form>
