@@ -49,6 +49,7 @@ function App() {
         const newCards = cards.map(c => c._id === card._id ? newCard : c);
         setCards(newCards);
       })
+      .catch(err => console.error(err))
   }
 
   function handleCardDelete(card) {
@@ -57,6 +58,7 @@ function App() {
         const newCards = cards.filter(item => item._id !== card._id);
         setCards(newCards);
       })
+      .catch(err => console.error(err))
   }
 
   function handleEditAvatarClick() {

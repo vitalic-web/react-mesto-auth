@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import PopupWithForm from "./PopupWithForm";
 
 /**
@@ -11,7 +11,7 @@ import PopupWithForm from "./PopupWithForm";
  * @constructor
  */
 
-function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const currentUser = useContext(CurrentUserContext);
@@ -39,22 +39,21 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
 
   return (
     <PopupWithForm title="Редактировать профиль"
-                   name="edit_profile"
-                   isOpen={isOpen}
-                   onClose={onClose}
-                   onSubmit={handleSubmit}
+      name="edit_profile"
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      buttonText="Сохранить"
     >
       <input name="name" className="popup__input popup__input_filed_name" type="text" required
-             pattern="[А-ЯЁа-яёA-Za-z -]{1,}" minLength="2" maxLength="40" id="name-input" placeholder={"Имя"}
-             value={name} onChange={nameChange}/>
-      <span className="popup__input-error-message" id="name-input-error"/>
+        pattern="[А-ЯЁа-яёA-Za-z -]{1,}" minLength="2" maxLength="40" id="name-input" placeholder={"Имя"}
+        value={name} onChange={nameChange} />
+      <span className="popup__input-error-message" id="name-input-error" />
 
       <input name="about" className="popup__input popup__input_filed_prof" type="text" required
-             minLength="2" maxLength="200" id="prof-input" placeholder={"Занятие"}
-             value={description} onChange={descriptionChange}/>
-      <span className="popup__input-error-message" id="prof-input-error"/>
-
-      <button className="popup__save-button" type="submit">Сохранить</button>
+        minLength="2" maxLength="200" id="prof-input" placeholder={"Занятие"}
+        value={description} onChange={descriptionChange} />
+      <span className="popup__input-error-message" id="prof-input-error" />
     </PopupWithForm>
   );
 }

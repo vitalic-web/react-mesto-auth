@@ -170,4 +170,3 @@ export const apiAuth = new Api({
     'Content-Type': 'application/json'
   }
 })
-

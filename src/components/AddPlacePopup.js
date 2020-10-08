@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import PopupWithForm from "./PopupWithForm";
 
 /**
@@ -10,7 +10,7 @@ import PopupWithForm from "./PopupWithForm";
  * @constructor
  */
 
-function AddPlacePopup({isOpen, onClose, onAddPlaceSubmit}) {
+function AddPlacePopup({ isOpen, onClose, onAddPlaceSubmit }) {
   const nameRef = useRef('');
   const linkRef = useRef('');
 
@@ -26,19 +26,19 @@ function AddPlacePopup({isOpen, onClose, onAddPlaceSubmit}) {
 
   return (
     <PopupWithForm title="Новое место"
-                   name="add_photo"
-                   isOpen={isOpen}
-                   onClose={onClose}
-                   onSubmit={handleSubmit}
+      name="add_photo"
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      buttonText="Создать"
     >
       <input name="place" className="popup__input popup__input_filed_name" type="text" placeholder="Название"
-             required minLength="1" maxLength="30" id="place-input" ref={nameRef}/>
-      <span className="popup__input-error-message" id="place-input-error"/>
+        required minLength="1" maxLength="30" id="place-input" ref={nameRef} />
+      <span className="popup__input-error-message" id="place-input-error" />
 
       <input name="link" className="popup__input popup__input_filed_prof" type="url"
-             placeholder="Ссылка на картинку" required id="link-input" ref={linkRef}/>
-      <span className="popup__input-error-message" id="link-input-error"/>
-      <button className="popup__save-button" type="submit">Создать</button>
+        placeholder="Ссылка на картинку" required id="link-input" ref={linkRef} />
+      <span className="popup__input-error-message" id="link-input-error" />
     </PopupWithForm>
   )
 }

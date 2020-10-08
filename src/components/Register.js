@@ -76,7 +76,7 @@ function Register({ setIsLogin, setIsSuccess }) {
       <input className="user-enter__input" name="email" type="email" id="reg-email" placeholder="Email" required
         value={email} onChange={handleEmailInput} />
       <input className="user-enter__input" name="password" type="password" id="reg-password" placeholder="Пароль" required
-        value={password} onChange={handlePasswordInput} />
+        value={password} onChange={handlePasswordInput} minLength="5" />
       <button className="user-enter__button" type="submit" >Зарегистрироваться</button>
       <p className="user-enter__redirect">Уже зарегистрированы? <a href="/sign-in">Войти</a></p>
     </form>
