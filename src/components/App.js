@@ -14,7 +14,8 @@ import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 
-import { api, apiAuth } from '../utils/api.js';
+import Api from '../utils/api';
+
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function App() {
@@ -32,21 +33,13 @@ function App() {
   const [isSuccess, setIsSuccess] = useState(false);
   const history = useHistory();
 
-  useEffect(() => {
-    Promise.all([api.getProfileInfo(), api.getInitialCards()])
-      .then(([profileInfo, cardsInfo]) => {
-        setCurrentUser(profileInfo);
-        setCards(cardsInfo);
-      })
-      .catch(err => console.error(err))
-  }, [])
-
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
 
     api.changeLikeCardStatus(card._id, isLiked)
       .then((newCard) => {
-        const newCards = cards.map(c => c._id === card._id ? newCard : c);
+        const newCards = cards.map(c => c._id === card._id ? newCard.data : c);
+
         setCards(newCards);
       })
       .catch(err => console.error(err))
@@ -96,7 +89,7 @@ function App() {
   function handleUpdateUser(name, description) {
     api.setProfileInfo(name, description)
       .then(res => {
-        setCurrentUser(res);
+        setCurrentUser(res.data);
         closeAllPopups();
       })
       .catch(err => console.error(err))
@@ -106,15 +99,16 @@ function App() {
   function handleUpdateAvatar(avatarLink) {
     api.editAvatar(avatarLink)
       .then(res => {
-        setCurrentUser(res);
+        setCurrentUser(res.data);
         closeAllPopups();
       })
   }
 
+  // добавление карточки
   function handleAddPlaceSubmit(place, link) {
     api.addCard(place, link)
       .then(res => {
-        setCards([res, ...cards]);
+        setCards([res.data, ...cards]);
         closeAllPopups();
         place = ''
         link = '';
@@ -144,28 +138,42 @@ function App() {
     }
   })
 
+  const jwt = localStorage.getItem('jwt');
+
+  const api = new Api({
+    url: 'http://localhost:3001',
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwt}`
+    }
+  });
+
+  // console.log(api);
+
   // проверка токена
-  const tokenCheck = () => {
-    const jwt = localStorage.getItem('jwt');
+  const tokenCheck = (jwt) => {
+    // const jwt = await localStorage.getItem('jwt');
 
     if (jwt) {
-      apiAuth.getUserInfo(jwt)
-        .then(res => {
-          if (res) {
-            setIsLogin(true);
-            setUserData({
-              email: res.email,
-              auth: 'Выйти'
-            });
-            history.push('/')
-          }
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([profileInfo, cardsInfo]) => {
+          setIsLogin(true);
+          setUserData({
+            email: profileInfo.email,
+            auth: 'Выйти'
+          });
+          setCurrentUser(profileInfo);
+          setCards(cardsInfo.data);
+          history.push('/')
         })
         .catch((err) => console.log(err));
     }
   }
 
   useEffect(() => {
-    tokenCheck();
+    tokenCheck(jwt);
   }, [isLogin]);
 
   // выход из учетной записи

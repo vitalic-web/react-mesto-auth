@@ -17,7 +17,7 @@ function Header({ isLogin, userData, signOut }) {
             <Link to="/sign-in" className="header__link">Вход</Link>
           </Route>
           <Route path="/">
-            <Link to="/sign-in" className="header__link" onClick={signOut}>Выход</Link>
+            <Link to="/sign-in" className="header__link" onClick={signOut}>{userData.auth}</Link>
           </Route>
         </Switch>
       </div>

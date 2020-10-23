@@ -1,4 +1,4 @@
-export class Api {
+export default class Api {
   constructor(options) {
     this._url = options.url;
     this._method = options.method;
@@ -21,9 +21,14 @@ export class Api {
       .then(this._handleResponse)
   };
 
-  getInitialCards() {
+  getInitialCards(jwt) {
     return fetch(`${this._url}/cards`, {
       method: this._method,
+      // headers: {
+      //   'Accept': 'application/json',
+      //   'Content-Type': 'application/json',
+      //   'Authorization': `Bearer ${jwt}`
+      // }
       headers: this._headers
     })
       .then(this._handleResponse)
@@ -63,13 +68,13 @@ export class Api {
 
   changeLikeCardStatus(cardID, isLiked) {
     if (isLiked) {
-      return fetch(`${this._url}/cards/likes/${cardID}`, {
+      return fetch(`${this._url}/cards/${cardID}/likes`, {
         method: 'DELETE',
         headers: this._headers
       })
         .then(this._handleResponse)
     } else {
-      return fetch(`${this._url}/cards/likes/${cardID}`, {
+      return fetch(`${this._url}/cards/${cardID}/likes`, {
         method: 'PUT',
         headers: this._headers
       })
@@ -131,42 +136,53 @@ export class Api {
   getUserInfo(jwt) {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`
-      }
+      // headers: {
+      //   'Accept': 'application/json',
+      //   'Content-Type': 'application/json',
+      //   'Authorization': `Bearer ${jwt}`
+      // }
+      headers: this._headers
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
-        } else if (response.status === 401 && !jwt) {
-          return Promise.reject(`Ошибка: ${response.status} - токен не передан или передан не в том формате`);
-        } else if (response.status === 401) {
+        }
+        // else if (response.status === 401 && !jwt) {
+        //   return Promise.reject(`Ошибка: ${response.status} - токен не передан или передан не в том формате`);
+        // }
+        else if (response.status === 401) {
           return Promise.reject(`Ошибка: ${response.status} - переданный токен некорректен`);
         }
       })
       .then(data => data.data)
   }
-
 }
 
 // экземпляр апи для работы с карточками и информацией о пользователе
-export const api = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-13',
-  method: 'GET',
-  headers: {
-    authorization: '91300657-0053-4635-a6b2-461fc085116c',
-    'Content-Type': 'application/json'
-  }
-});
+// export const api = new Api({
+//   url: 'https://mesto.nomoreparties.co/v1/cohort-13',
+//   method: 'GET',
+//   headers: {
+//     authorization: '91300657-0053-4635-a6b2-461fc085116c',
+//     'Content-Type': 'application/json'
+//   }
+// });
+
+// export const api = new Api({
+//   url: 'http://localhost:3001',
+//   method: 'GET',
+//   headers: {
+//     'Accept': 'application/json',
+//     'Content-Type': 'application/json',
+//   }
+// });
 
 // экземпляр апи для работы с регистрацией/авторизацией пользователя
 export const apiAuth = new Api({
-  url: 'https://auth.nomoreparties.co',
+  url: 'http://localhost:3001',
   method: 'POST',
   headers: {
     'Accept': 'application/json',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
 })

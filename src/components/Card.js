@@ -13,8 +13,8 @@ import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
 function Card({card, onCardClick, onCardLike, onCardDelete}) {
   const currentUser = useContext(CurrentUserContext);
-  const isOwn = card.owner._id === currentUser._id; // проверка карточки: если моя, то возвращает true, если нет false
-  const isLiked = card.likes.some(i => i._id === currentUser._id); // проверка лайка: если мой, то возвращает true, если нет false  
+  const isOwn = card.owner === currentUser._id; // проверка карточки: если моя, то возвращает true, если нет false
+  const isLiked = card.likes.some(i => i === currentUser._id); // проверка лайка: если мой, то возвращает true, если нет false
 
   // функция для передачи параметров текущей карточки для открытия картинки в полный размер
   function handleClick() {
