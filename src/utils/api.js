@@ -147,7 +147,7 @@ export default class Api {
 
 // экземпляр апи для работы с регистрацией/авторизацией пользователя
 export const apiAuth = new Api({
-  url: 'http://api.vtl.students.nomoreparties.co',
+  url: 'https://api.vtl.students.nomoreparties.co',
   method: 'POST',
   headers: {
     'Accept': 'application/json',

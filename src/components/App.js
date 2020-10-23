@@ -141,7 +141,7 @@ function App() {
   const jwt = localStorage.getItem('jwt');
 
   const api = new Api({
-    url: 'http://api.vtl.students.nomoreparties.co',
+    url: 'https://api.vtl.students.nomoreparties.co',
     method: 'GET',
     headers: {
       'Accept': 'application/json',
