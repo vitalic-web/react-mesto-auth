@@ -21,14 +21,9 @@ export default class Api {
       .then(this._handleResponse)
   };
 
-  getInitialCards(jwt) {
+  getInitialCards() {
     return fetch(`${this._url}/cards`, {
       method: this._method,
-      // headers: {
-      //   'Accept': 'application/json',
-      //   'Content-Type': 'application/json',
-      //   'Authorization': `Bearer ${jwt}`
-      // }
       headers: this._headers
     })
       .then(this._handleResponse)
@@ -133,23 +128,15 @@ export default class Api {
   }
 
   // метод запроса регистрационных данных пользователя
-  getUserInfo(jwt) {
+  getUserInfo() {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
-      // headers: {
-      //   'Accept': 'application/json',
-      //   'Content-Type': 'application/json',
-      //   'Authorization': `Bearer ${jwt}`
-      // }
       headers: this._headers
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
         }
-        // else if (response.status === 401 && !jwt) {
-        //   return Promise.reject(`Ошибка: ${response.status} - токен не передан или передан не в том формате`);
-        // }
         else if (response.status === 401) {
           return Promise.reject(`Ошибка: ${response.status} - переданный токен некорректен`);
         }
@@ -158,28 +145,9 @@ export default class Api {
   }
 }
 
-// экземпляр апи для работы с карточками и информацией о пользователе
-// export const api = new Api({
-//   url: 'https://mesto.nomoreparties.co/v1/cohort-13',
-//   method: 'GET',
-//   headers: {
-//     authorization: '91300657-0053-4635-a6b2-461fc085116c',
-//     'Content-Type': 'application/json'
-//   }
-// });
-
-// export const api = new Api({
-//   url: 'http://localhost:3001',
-//   method: 'GET',
-//   headers: {
-//     'Accept': 'application/json',
-//     'Content-Type': 'application/json',
-//   }
-// });
-
 // экземпляр апи для работы с регистрацией/авторизацией пользователя
 export const apiAuth = new Api({
-  url: 'http://localhost:3001',
+  url: 'http://api.vtl.students.nomoreparties.co',
   method: 'POST',
   headers: {
     'Accept': 'application/json',

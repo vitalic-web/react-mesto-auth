@@ -141,7 +141,7 @@ function App() {
   const jwt = localStorage.getItem('jwt');
 
   const api = new Api({
-    url: 'http://localhost:3001',
+    url: 'http://api.vtl.students.nomoreparties.co',
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -150,11 +150,8 @@ function App() {
     }
   });
 
-  // console.log(api);
-
   // проверка токена
   const tokenCheck = (jwt) => {
-    // const jwt = await localStorage.getItem('jwt');
 
     if (jwt) {
       Promise.all([api.getUserInfo(), api.getInitialCards()])
