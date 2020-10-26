@@ -101,7 +101,7 @@ export default class Api {
         } else if (response.status === 400) {
           return Promise.reject(`Ошибка: ${response.status} - не передано одно из полей`);
         } else if (response.status === 401) {
-          return Promise.reject(`Ошибка: ${response.status} - пользователь с таким email не найден`);
+          return Promise.reject(`Ошибка: ${response.status} - неправильные почта или пароль`);
         }
       })
       .then((data) => {
