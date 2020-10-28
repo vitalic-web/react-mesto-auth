@@ -11,6 +11,10 @@ function InfoTooltip({ isOpen, close }) {
             <img className="popup-tooltip__success-img" src={require('../images/error_reg.svg')} alt="error" />
             <p className="popup-tooltip">Что-то пошло не так! Попробуйте ещё раз.</p>
           </Route>
+          <Route path="/sign-in">
+            <img className="popup-tooltip__success-img" src={require('../images/error_reg.svg')} alt="error" />
+            <p className="popup-tooltip">Что-то пошло не так! Попробуйте ещё раз.</p>
+          </Route>
           <Route path="/">
             <img className="popup-tooltip__success-img" src={require('../images/success.svg')} alt="success" />
             <p className="popup-tooltip">Вы успешно зарегистрировались!</p>

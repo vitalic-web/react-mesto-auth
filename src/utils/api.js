@@ -89,7 +89,7 @@ export default class Api {
   };
 
   // метод авторизации пользователя
-  login(email, password) {
+  login(email, password, error) {
     return fetch(`${this._url}/signin`, {
       method: this._method,
       headers: this._headers,
@@ -99,8 +99,10 @@ export default class Api {
         if (response.status === 200) {
           return response.json();
         } else if (response.status === 400) {
+          error(true);
           return Promise.reject(`Ошибка: ${response.status} - не передано одно из полей`);
         } else if (response.status === 401) {
+          error(true);
           return Promise.reject(`Ошибка: ${response.status} - неправильные почта или пароль`);
         }
       })
@@ -123,6 +125,9 @@ export default class Api {
         } else if (response.status === 400) {
           error(true);
           return Promise.reject(`Ошибка: ${response.status} - некорректно заполнено одно из полей`);
+        } else if (response.status === 409) {
+          error(true);
+          return Promise.reject(`Ошибка: ${response.status} - пользователь с таким емейл существует`);
         }
       })
   }
